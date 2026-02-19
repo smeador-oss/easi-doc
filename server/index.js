@@ -68,7 +68,7 @@ migrateContentIndices().then(async () => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
   const url = `http://localhost:${PORT}`;
   console.log(`easi-doc running at ${url}`);
 
