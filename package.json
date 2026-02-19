@@ -2,6 +2,12 @@
   "name": "easi-doc",
   "version": "1.0.0",
   "description": "Simple, portable documentation and data catalog portal — auto-discovering, multi-portal, standalone executable",
+  "author": "Steven Meador <smeador@protonmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smeador-oss/easi-doc.git"
+  },
   "main": "server/index.js",
   "bin": "server/index.js",
   "pkg": {
