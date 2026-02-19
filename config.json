@@ -1,0 +1,12 @@
+{
+  "name": "easi-doc",
+  "subtitle": "Simple Documentation Portal",
+  "logo": "assets/images/easi-doc-logo.svg",
+  "auth": {
+    "mode": "credentials"
+  },
+  "colors": {
+    "primary": "#0052FF",
+    "accent": "#00D4FF"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "easi-doc",
+  "version": "1.0.0",
+  "description": "Simple, portable documentation and data catalog portal — auto-discovering, multi-portal, standalone executable",
+  "main": "server/index.js",
+  "bin": "server/index.js",
+  "pkg": {
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "build": "pkg . --output dist/easi-doc.exe"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "codemirror": "^5.65.21",
+    "dotenv": "^17.2.4",
+    "express": "^4.21.0",
+    "mammoth": "^1.11.0",
+    "minisearch": "^7.2.0",
+    "pdfjs-dist": "^5.4.624",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.3.0"
+  }
+}

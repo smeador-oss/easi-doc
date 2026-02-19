@@ -1,0 +1,24 @@
+{
+  "title": "Getting Started",
+  "subtitle": "Learn how to use and configure easi-doc",
+  "icon": "getting-started",
+  "order": 1,
+  "welcome": {
+    "title": "Welcome to easi-doc",
+    "subtitle": "A simple, portable documentation portal for individuals and small businesses.",
+    "cards": [
+      {
+        "title": "Using easi-doc",
+        "description": "Learn how to run, configure, and manage your documentation portal.",
+        "icon": "file",
+        "link": "using-easi-doc/overview.md"
+      },
+      {
+        "title": "Agent Reference",
+        "description": "Technical reference for AI agents that help you build portals and content.",
+        "icon": "file",
+        "link": "agent-reference/overview.md"
+      }
+    ]
+  }
+}

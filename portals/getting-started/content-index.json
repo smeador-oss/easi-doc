@@ -1,0 +1,77 @@
+{
+  "portalId": "getting-started",
+  "version": 1,
+  "generatedAt": "2026-02-19T02:09:20.883Z",
+  "sections": [
+    {
+      "id": "147b152f-5f14-4427-bf6b-f287c4fd09c2",
+      "title": "Agent Reference",
+      "path": "agent-reference",
+      "order": 1,
+      "pages": [
+        {
+          "id": "eb128881-0277-41aa-8afa-ac267aaf4744",
+          "title": "easi-doc File Structure Reference",
+          "path": "agent-reference/file-structure-reference.md",
+          "type": "md",
+          "order": 1,
+          "createdAt": "2026-02-19T01:54:17.205Z",
+          "modifiedAt": "2026-02-19T02:09:20.859Z"
+        },
+        {
+          "id": "2af8589d-c0be-4408-b8a7-70adc287abbd",
+          "title": "Agent Reference",
+          "path": "agent-reference/overview.md",
+          "type": "md",
+          "order": 2,
+          "createdAt": "2026-02-19T01:53:25.055Z",
+          "modifiedAt": "2026-02-19T01:53:25.055Z"
+        }
+      ]
+    },
+    {
+      "id": "c6db36fb-e9df-4424-8ac0-9bdb261605df",
+      "title": "Using Easi Doc",
+      "path": "using-easi-doc",
+      "order": 2,
+      "pages": [
+        {
+          "id": "28165116-98da-441a-82aa-56f1e22397b2",
+          "title": "Creating Content with AI",
+          "path": "using-easi-doc/creating-content-with-ai.md",
+          "type": "md",
+          "order": 1,
+          "createdAt": "2026-02-19T01:53:09.492Z",
+          "modifiedAt": "2026-02-19T01:53:09.492Z"
+        },
+        {
+          "id": "6a606cfb-0bec-410b-871e-342482d5a63a",
+          "title": "Managing Content",
+          "path": "using-easi-doc/managing-content.md",
+          "type": "md",
+          "order": 2,
+          "createdAt": "2026-02-19T01:52:35.455Z",
+          "modifiedAt": "2026-02-19T01:52:35.455Z"
+        },
+        {
+          "id": "e86d9253-4a62-4f7f-9a5a-0c79efe73427",
+          "title": "What is easi-doc?",
+          "path": "using-easi-doc/overview.md",
+          "type": "md",
+          "order": 3,
+          "createdAt": "2026-02-19T01:51:45.107Z",
+          "modifiedAt": "2026-02-19T01:51:45.107Z"
+        },
+        {
+          "id": "9c0f2977-675f-45db-83a8-dcaa8d123f08",
+          "title": "Running the App",
+          "path": "using-easi-doc/running-the-app.md",
+          "type": "md",
+          "order": 4,
+          "createdAt": "2026-02-19T01:52:07.868Z",
+          "modifiedAt": "2026-02-19T01:52:07.868Z"
+        }
+      ]
+    }
+  ]
+}
