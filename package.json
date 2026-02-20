@@ -1,6 +1,6 @@
 {
   "name": "easi-doc",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Simple, portable documentation and data catalog portal — auto-discovering, multi-portal, standalone executable",
   "main": "server/index.js",
   "bin": "server/index.js",
@@ -8,7 +8,12 @@
     "targets": [
       "node18-win-x64"
     ],
-    "outputPath": "dist"
+    "outputPath": "dist",
+    "assets": [
+      "public/**/*",
+      "portals/**/*",
+      "config.json"
+    ]
   },
   "scripts": {
     "start": "node server/index.js",

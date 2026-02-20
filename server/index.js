@@ -5,6 +5,7 @@
  */
 require('dotenv').config();
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const fsp = require('fs/promises');
 const { exec } = require('child_process');
@@ -25,22 +26,48 @@ const PUBLIC_DIR = path.join(BASE_DIR, 'public');
 const PORTALS_DIR = path.join(BASE_DIR, 'portals');
 const CONFIG_PATH = path.join(BASE_DIR, 'config.json');
 
-// Parse request bodies (for content push API + admin UI)
-app.use(express.json({ limit: '5mb' }));
-app.use(express.text({ limit: '5mb' }));
+// ─── First-run asset extraction (pkg exe only) ──────────────
+// When bundled with pkg, assets live inside a read-only snapshot.
+// On first launch we copy them next to the exe so the app can
+// serve and modify them normally.
 
-// Static assets (CSS, JS, vendor, images)
-app.use(express.static(PUBLIC_DIR));
+async function copyRecursive(src, dest) {
+  await fsp.mkdir(dest, { recursive: true });
+  const entries = await fsp.readdir(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const s = path.join(src, entry.name);
+    const d = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      await copyRecursive(s, d);
+    } else {
+      await fsp.copyFile(s, d);
+    }
+  }
+}
 
-// API routes
-app.use('/api', apiRouter({ portalsDir: PORTALS_DIR, configPath: CONFIG_PATH }));
+async function extractDefaults() {
+  // Snapshot root is one level up from __dirname (server/)
+  const snap = path.join(__dirname, '..');
 
-// SPA fallback — all other routes serve index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
-});
+  if (!fs.existsSync(PUBLIC_DIR)) {
+    console.log('[startup] Extracting public assets...');
+    await copyRecursive(path.join(snap, 'public'), PUBLIC_DIR);
+  }
+  if (!fs.existsSync(PORTALS_DIR)) {
+    console.log('[startup] Extracting default portals...');
+    await copyRecursive(path.join(snap, 'portals'), PORTALS_DIR);
+  }
+  if (!fs.existsSync(CONFIG_PATH)) {
+    console.log('[startup] Extracting default configuration...');
+    await fsp.copyFile(path.join(snap, 'config.json'), CONFIG_PATH);
+  }
+  if (!fs.existsSync(path.join(BASE_DIR, 'data'))) {
+    await fsp.mkdir(path.join(BASE_DIR, 'data'), { recursive: true });
+  }
+}
 
-// ─── Startup: Migrate content indices ────────────────────────
+// ─── Startup ─────────────────────────────────────────────────
+
 async function migrateContentIndices() {
   try {
     const entries = await fsp.readdir(PORTALS_DIR, { withFileTypes: true });
@@ -59,26 +86,54 @@ async function migrateContentIndices() {
   }
 }
 
-migrateContentIndices().then(async () => {
+async function bootstrap() {
+  // Extract bundled assets on first run (pkg exe only)
+  if (process.pkg) {
+    await extractDefaults();
+  }
+
+  // Parse request bodies (for content push API + admin UI)
+  app.use(express.json({ limit: '5mb' }));
+  app.use(express.text({ limit: '5mb' }));
+
+  // Static assets (CSS, JS, vendor, images)
+  app.use(express.static(PUBLIC_DIR));
+
+  // API routes
+  app.use('/api', apiRouter({ portalsDir: PORTALS_DIR, configPath: CONFIG_PATH }));
+
+  // SPA fallback — all other routes serve index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+  });
+
+  // Migrate content indices and build search index
+  await migrateContentIndices();
   try {
     await searchStore.loadOrBuild(PORTALS_DIR);
     console.log('[startup] Search index ready');
   } catch (err) {
     console.error('[startup] Search index build failed:', err.message);
   }
-});
 
-app.listen(PORT, '127.0.0.1', () => {
-  const url = `http://localhost:${PORT}`;
-  console.log(`easi-doc running at ${url}`);
+  // Start server
+  app.listen(PORT, '127.0.0.1', () => {
+    const url = `http://localhost:${PORT}`;
+    console.log(`easi-doc running at ${url}`);
 
-  // Auto-open browser when running as standalone executable
-  if (process.pkg) {
-    console.log('Opening browser...');
-    switch (process.platform) {
-      case 'win32': exec(`start ${url}`); break;
-      case 'darwin': exec(`open ${url}`); break;
-      default: exec(`xdg-open ${url}`); break;
+    // Auto-open browser when running as standalone executable
+    if (process.pkg) {
+      console.log('Opening browser...');
+      switch (process.platform) {
+        case 'win32': exec(`start ${url}`); break;
+        case 'darwin': exec(`open ${url}`); break;
+        default: exec(`xdg-open ${url}`); break;
+      }
     }
-  }
+  });
+}
+
+bootstrap().catch(err => {
+  console.error('[startup] Fatal error:', err);
+  process.exit(1);
 });
