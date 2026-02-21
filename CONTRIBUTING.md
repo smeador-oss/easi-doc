@@ -1,6 +1,6 @@
 # Contributing to easi-doc
 
-Thanks for your interest in contributing! Here's how to get started.
+Contributions are welcome from everyone — not just developers. If you want to improve the documentation, report a bug, or suggest a feature, that's just as valuable as code. For bugs and feature requests, open an [issue](https://github.com/smeador-oss/easi-doc/issues) and describe what you're seeing or what you'd like. For code or docs changes, follow the steps below.
 
 ## 1. Fork and clone
 
@@ -37,7 +37,7 @@ git checkout -b your-feature-name
 npm run dev
 ```
 
-The app will start and open in your browser at `http://127.0.0.1:3000`.
+The app will start and open in your browser at `http://127.0.0.1:4242`.
 
 ## 5. Submit a pull request
 
@@ -48,6 +48,14 @@ Push your branch and open a pull request **targeting the `dev` branch** (not `ma
 - If you're fixing a bug, reference the issue number (e.g. `Fixes #12`)
 
 `main` is the stable release branch. Changes land there only via merges from `dev`.
+
+## Testing
+
+There are currently no automated tests. Before submitting a PR, manually test your changes end-to-end by running `npm start` and verifying that the affected feature works as expected. If you're touching auth, test both `"none"` and `"credentials"` modes. If you're touching content, test with at least one portal and a mix of markdown and JSON files.
+
+## Code style
+
+easi-doc uses vanilla JavaScript with no frontend framework and no TypeScript. Keep it that way. Match the style of the file you're editing — indentation, naming conventions, and module patterns are consistent throughout the codebase. No build tools are used for the frontend; what you write is what the browser runs.
 
 ## Questions?
 
