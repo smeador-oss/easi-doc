@@ -2,6 +2,8 @@
 
 A simple, portable documentation and data catalog portal. Runs as a standalone Windows executable — no Node.js, no terminal, no setup required for end users.
 
+![easi-doc running in browser](docs/screenshots/app-preview.png)
+
 ## Features
 
 - **Multi-portal** — Each folder in `portals/` becomes a separate documentation portal, auto-discovered at startup
