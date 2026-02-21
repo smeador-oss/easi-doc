@@ -71,7 +71,9 @@ class App {
   }
 
   async initApp() {
-    // Inject admin header button if admin
+    // Inject quit button (always visible so users know how to stop the app)
+    this.injectQuitButton();
+    // Inject admin panel button if logged in as admin
     if (this.isAdmin && this.authMode === 'credentials') {
       this.injectAdminHeaderButton();
     }
@@ -227,6 +229,44 @@ class App {
     }
 
     btn.addEventListener('click', () => this.openAdminPanel());
+  }
+
+  // ─── Quit Button ─────────────────────────────────────────────
+
+  injectQuitButton() {
+    const headerRight = document.querySelector('.header-right');
+    if (!headerRight || headerRight.querySelector('#quit-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'quit-btn';
+    btn.className = 'admin-header-btn';
+    btn.title = 'Quit easi-doc';
+    btn.setAttribute('aria-label', 'Quit easi-doc');
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>`;
+    const aboutBtn = headerRight.querySelector('#about-btn');
+    if (aboutBtn) {
+      headerRight.insertBefore(btn, aboutBtn);
+    } else {
+      headerRight.prepend(btn);
+    }
+
+    btn.addEventListener('click', async () => {
+      const confirmed = confirm('Stop the easi-doc server?\n\nThe app will shut down. You can then close this tab or delete easi-doc.exe.');
+      if (!confirmed) return;
+      try {
+        const resp = await fetch('/api/quit', { method: 'POST' });
+        if (resp.status === 401 || resp.status === 403) {
+          alert('You need to be signed in as admin to quit.\n\nUse the sign-in button to log in, then try again.');
+          return;
+        }
+      } catch (_) {}
+      document.body.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#555;gap:12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+          <strong style="font-size:1.2rem;">easi-doc has stopped.</strong>
+          <span>You can close this tab. It is now safe to delete easi-doc.exe.</span>
+        </div>`;
+    });
   }
 
   // ─── Admin Sign In (credentials auth) ──────────────────────

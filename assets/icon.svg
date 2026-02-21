@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- White circle background with teal border -->
+  <circle cx="128" cy="128" r="120" fill="white" stroke="#00D4FF" stroke-width="12"/>
+  <!-- Dot of the i -->
+  <circle cx="128" cy="74" r="22" fill="#00D4FF"/>
+  <!-- Stem of the i -->
+  <rect x="108" y="108" width="40" height="108" rx="10" ry="10" fill="#00D4FF"/>
+</svg>

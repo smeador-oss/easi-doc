@@ -6,15 +6,16 @@
 require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
+const net = require('net');
 const path = require('path');
 const fsp = require('fs/promises');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const apiRouter = require('./routes/api');
 const { migrateOrCreateIndex } = require('./services/content-index-store');
 const searchStore = require('./services/search-store');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4242;
 
 // Resolve base directory: when packaged with pkg, use the exe's location;
 // otherwise use the project root (one level up from server/).
@@ -25,6 +26,36 @@ const BASE_DIR = process.pkg
 const PUBLIC_DIR = path.join(BASE_DIR, 'public');
 const PORTALS_DIR = path.join(BASE_DIR, 'portals');
 const CONFIG_PATH = path.join(BASE_DIR, 'config.json');
+
+// ─── Helpers ─────────────────────────────────────────────────
+
+function openBrowser(url) {
+  // Use spawn with detached+unref so the browser-open process survives
+  // even if this process exits immediately after (second-click case).
+  let child;
+  switch (process.platform) {
+    case 'win32':
+      child = spawn('cmd', ['/c', 'start', '', url], { detached: true, stdio: 'ignore' });
+      break;
+    case 'darwin':
+      child = spawn('open', [url], { detached: true, stdio: 'ignore' });
+      break;
+    default:
+      child = spawn('xdg-open', [url], { detached: true, stdio: 'ignore' });
+  }
+  child.unref();
+}
+
+// Returns true if something is already listening on the given port.
+function checkAlreadyRunning(port) {
+  return new Promise((resolve) => {
+    const client = net.createConnection({ port, host: '127.0.0.1' }, () => {
+      client.destroy();
+      resolve(true);
+    });
+    client.on('error', () => resolve(false));
+  });
+}
 
 // ─── First-run asset extraction (pkg exe only) ──────────────
 // When bundled with pkg, assets live inside a read-only snapshot.
@@ -49,10 +80,12 @@ async function extractDefaults() {
   // Snapshot root is one level up from __dirname (server/)
   const snap = path.join(__dirname, '..');
 
-  if (!fs.existsSync(PUBLIC_DIR)) {
-    console.log('[startup] Extracting public assets...');
-    await copyRecursive(path.join(snap, 'public'), PUBLIC_DIR);
-  }
+  // Always overwrite public/ so app code stays in sync with the exe version.
+  // This ensures upgrades (dropping a new exe into an existing folder) pick up
+  // updated JS, CSS, and HTML immediately without a manual cleanup step.
+  await copyRecursive(path.join(snap, 'public'), PUBLIC_DIR);
+
+  // User data — only create on first run, never overwrite.
   if (!fs.existsSync(PORTALS_DIR)) {
     console.log('[startup] Extracting default portals...');
     await copyRecursive(path.join(snap, 'portals'), PORTALS_DIR);
@@ -87,8 +120,17 @@ async function migrateContentIndices() {
 }
 
 async function bootstrap() {
-  // Extract bundled assets on first run (pkg exe only)
+  // If already running (e.g. user double-clicked exe again after closing browser),
+  // just open the browser to the existing instance and exit cleanly.
   if (process.pkg) {
+    const running = await checkAlreadyRunning(PORT);
+    if (running) {
+      openBrowser(`http://localhost:${PORT}`);
+      // Wait long enough for the detached browser process to be handed off
+      // to the OS before we exit, then shut down cleanly.
+      await new Promise(r => setTimeout(r, 800));
+      process.exit(0);
+    }
     await extractDefaults();
   }
 
@@ -120,15 +162,8 @@ async function bootstrap() {
   app.listen(PORT, '127.0.0.1', () => {
     const url = `http://localhost:${PORT}`;
     console.log(`easi-doc running at ${url}`);
-
-    // Auto-open browser when running as standalone executable
     if (process.pkg) {
-      console.log('Opening browser...');
-      switch (process.platform) {
-        case 'win32': exec(`start ${url}`); break;
-        case 'darwin': exec(`open ${url}`); break;
-        default: exec(`xdg-open ${url}`); break;
-      }
+      openBrowser(url);
     }
   });
 }

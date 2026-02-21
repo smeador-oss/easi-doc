@@ -7,6 +7,12 @@
  *   "credentials" – username/password auth with bcrypt + session cookie
  */
 const express = require('express');
+const crypto = require('crypto');
+
+// Unique token generated fresh on every server start.
+// Embedding it in session cookies means any cookie from a previous
+// run is automatically invalidated — users log in again after restart.
+const SESSION_NONCE = crypto.randomBytes(16).toString('hex');
 
 // ─── Cookie Parsing ─────────────────────────────────────────
 
@@ -41,6 +47,11 @@ function createAuthRouter({ authMode, adminStore, sessionDays = 365, passwordMin
       res.json({ username: null, isAdmin: true, needsSetup: false, authMode: 'none' });
     });
 
+    router.post('/quit', (req, res) => {
+      res.json({ ok: true });
+      setTimeout(() => process.exit(0), 500);
+    });
+
     return { router, requireAdmin, getUserIdentity, isAdminEnabled: true, authMode };
   }
 
@@ -50,8 +61,10 @@ function createAuthRouter({ authMode, adminStore, sessionDays = 365, passwordMin
 
   function getUserIdentity(req) {
     const cookies = parseCookies(req);
-    const username = (cookies.portal_session || '').trim().toLowerCase();
-    return { username: username || '', displayName: '' };
+    const raw = (cookies.portal_session || '').trim();
+    const [username, nonce] = raw.split('|');
+    if (!username || nonce !== SESSION_NONCE) return { username: '', displayName: '' };
+    return { username: username.toLowerCase(), displayName: '' };
   }
 
   function requireAdmin(req, res, next) {
@@ -143,8 +156,9 @@ function createAuthRouter({ authMode, adminStore, sessionDays = 365, passwordMin
         return res.status(409).json({ error: result.reason, code: 'SETUP_FAILED' });
       }
 
-      // Set session cookie
-      res.cookie('portal_session', username.trim().toLowerCase(), {
+      // Set session cookie (includes nonce so it expires on server restart)
+      const sessionUser = username.trim().toLowerCase();
+      res.cookie('portal_session', `${sessionUser}|${SESSION_NONCE}`, {
         httpOnly: true,
         sameSite: 'lax',
         maxAge
@@ -180,8 +194,8 @@ function createAuthRouter({ authMode, adminStore, sessionDays = 365, passwordMin
         return res.status(401).json({ error: result.reason, code: 'INVALID_CREDENTIALS' });
       }
 
-      // Set session cookie
-      res.cookie('portal_session', result.admin.username, {
+      // Set session cookie (includes nonce so it expires on server restart)
+      res.cookie('portal_session', `${result.admin.username}|${SESSION_NONCE}`, {
         httpOnly: true,
         sameSite: 'lax',
         maxAge
@@ -263,6 +277,13 @@ function createAuthRouter({ authMode, adminStore, sessionDays = 365, passwordMin
       console.error('[api] Remove admin failed:', err);
       res.status(500).json({ error: 'Failed to remove admin', code: 'ADMIN_ERROR' });
     }
+  });
+
+  // ─── POST /api/quit ───────────────────────────────────────
+
+  router.post('/quit', requireAdmin, (req, res) => {
+    res.json({ ok: true });
+    setTimeout(() => process.exit(0), 500);
   });
 
   // ─── POST /api/admins/me/password ─────────────────────────
