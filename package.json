@@ -1,6 +1,6 @@
 {
   "name": "easi-doc",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Simple, portable documentation and data catalog portal — auto-discovering, multi-portal, standalone executable",
   "main": "server/index.js",
   "bin": "server/index.js",
@@ -9,6 +9,7 @@
       "node18-win-x64"
     ],
     "outputPath": "dist",
+    "icon": "assets/icon.ico",
     "assets": [
       "public/**/*",
       "portals/**/*",
@@ -31,6 +32,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@yao-pkg/pkg": "^6.3.0"
+    "@yao-pkg/pkg": "^6.3.0",
+    "rcedit": "^5.0.2"
   }
 }

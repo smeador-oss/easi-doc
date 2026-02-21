@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-20
+
+### Added
+- **Quit button** — a power icon in the header (visible to admins, or always in open-access mode) lets you cleanly shut down the server from the browser. The page confirms when it is safe to close the tab or delete `easi-doc.exe`.
+- **Auto-update of app assets on launch** — dropping a new `easi-doc.exe` into an existing folder automatically replaces the app code (`public/`) on startup. Your portals, config, and data are never touched.
+- **Reopen by double-clicking** — if you close the browser tab but leave the server running, double-clicking `easi-doc.exe` again simply reopens the browser to the existing instance instead of crashing.
+- **Session invalidation on restart** — stopping and restarting the server requires logging in again, so sessions don't persist beyond the current run.
+
+### Changed
+- Default port changed from `3000` to `4242` to avoid conflicts with other common local development tools.
+
 ## [1.1.1] - 2026-02-20
 
 ### Fixed
@@ -37,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REST API for AI agent integration.
 - Fully portable — the entire app can be zipped and shared.
 
+[1.2.0]: https://github.com/smeador-oss/easi-doc/releases/tag/v1.2.0
 [1.1.1]: https://github.com/smeador-oss/easi-doc/releases/tag/v1.1.1
 [1.1.0]: https://github.com/smeador-oss/easi-doc/releases/tag/v1.1.0
 [1.0.1]: https://github.com/smeador-oss/easi-doc/releases/tag/v1.0.1
