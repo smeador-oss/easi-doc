@@ -56,7 +56,8 @@ echo.
 echo Output: dist\easi-doc.exe
 echo.
 echo The executable is fully self-contained.
-echo On first launch it auto-extracts public\, portals\, config.json, and data\.
+echo On first launch it creates an easi-doc\ folder next to the exe
+echo containing public\, portals\, config.json, and data\.
 echo.
 echo To distribute: share easi-doc.exe — no other files needed.
 echo.

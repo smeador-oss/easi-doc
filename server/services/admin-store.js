@@ -17,10 +17,10 @@ const BCRYPT_ROUNDS = 10;
 const MAX_FAILED_ATTEMPTS = 10;
 const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
-// Resolve base directory: when packaged with pkg, use the exe's location;
-// otherwise use the project root (two levels up from server/services/).
+// Resolve base directory: when packaged with pkg, use an easi-doc/ subfolder
+// next to the exe; otherwise use the project root (two levels up from server/services/).
 const BASE_DIR = process.pkg
-  ? path.dirname(process.execPath)
+  ? path.join(path.dirname(process.execPath), 'easi-doc')
   : path.join(__dirname, '..', '..');
 
 const DATA_DIR = path.join(BASE_DIR, 'data');

@@ -4,3 +4,4 @@ data/
 .env
 .claude/
 portals/_search-index.json
+CLAUDE.md
