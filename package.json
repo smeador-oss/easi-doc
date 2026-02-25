@@ -1,6 +1,6 @@
 {
   "name": "easi-doc",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Simple, portable documentation and data catalog portal — auto-discovering, multi-portal, standalone executable",
   "author": "Steven Meador <smeador@protonmail.com>",
   "license": "MIT",
