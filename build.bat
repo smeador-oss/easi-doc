@@ -42,7 +42,7 @@ echo.
 
 :: Patch executable: hide console window (subsystem 3->2: Console->Windows GUI)
 echo Patching executable to suppress console window...
-node -e "const f=require('fs');const b=f.readFileSync('dist/easi-doc.exe');const pe=b.readInt32LE(0x3C);b[pe+0x5C]=2;f.writeFileSync('dist/easi-doc.exe',b);console.log('Patched OK')"
+powershell -NoProfile -Command "$f=[System.IO.File]::ReadAllBytes('dist\easi-doc.exe');$pe=[BitConverter]::ToInt32($f,0x3C);$f[$pe+0x5C]=2;[System.IO.File]::WriteAllBytes('dist\easi-doc.exe',$f)"
 if errorlevel 1 (
     echo WARNING: Console suppression patch failed. The exe will still work but may show a terminal window.
 )
