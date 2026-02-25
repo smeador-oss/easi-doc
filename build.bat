@@ -42,7 +42,7 @@ echo.
 
 :: Patch executable: hide console window (subsystem 3->2: Console->Windows GUI)
 echo Patching executable to suppress console window...
-powershell -NoProfile -Command "$f=[System.IO.File]::ReadAllBytes('dist\easi-doc.exe');$pe=[BitConverter]::ToInt32($f,0x3C);$f[$pe+0x5C]=2;[System.IO.File]::WriteAllBytes('dist\easi-doc.exe',$f)"
+npx rcedit dist\easi-doc.exe --set-subsystem 2
 if errorlevel 1 (
     echo WARNING: Console suppression patch failed. The exe will still work but may show a terminal window.
 )
