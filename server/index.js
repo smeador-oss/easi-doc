@@ -17,10 +17,10 @@ const searchStore = require('./services/search-store');
 const app = express();
 const PORT = process.env.PORT || 4242;
 
-// Resolve base directory: when packaged with pkg, use an easi-doc/ subfolder
-// next to the exe; otherwise use the project root (one level up from server/).
+// Resolve base directory: when packaged with pkg, use the directory containing
+// the exe; otherwise use the project root (one level up from server/).
 const BASE_DIR = process.pkg
-  ? path.join(path.dirname(process.execPath), 'easi-doc')
+  ? path.dirname(process.execPath)
   : path.join(__dirname, '..');
 
 const PUBLIC_DIR = path.join(BASE_DIR, 'public');

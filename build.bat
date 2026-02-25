@@ -42,7 +42,7 @@ echo.
 
 :: Patch executable: hide console window (subsystem 3->2: Console->Windows GUI)
 echo Patching executable to suppress console window...
-npx rcedit dist\easi-doc.exe --set-subsystem 2
+node -e "const f=require('fs');const b=f.readFileSync('dist/easi-doc.exe');const pe=b.readInt32LE(0x3C);b[pe+0x5C]=2;f.writeFileSync('dist/easi-doc.exe',b);console.log('Patched OK')"
 if errorlevel 1 (
     echo WARNING: Console suppression patch failed. The exe will still work but may show a terminal window.
 )
@@ -56,8 +56,8 @@ echo.
 echo Output: dist\easi-doc.exe
 echo.
 echo The executable is fully self-contained.
-echo On first launch it creates an easi-doc\ folder next to the exe
-echo containing public\, portals\, config.json, and data\.
+echo On first launch it extracts public\, portals\, config.json, and data\
+echo next to the exe.
 echo.
 echo To distribute: share easi-doc.exe — no other files needed.
 echo.
